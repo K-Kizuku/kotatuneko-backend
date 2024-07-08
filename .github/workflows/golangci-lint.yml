@@ -17,9 +17,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: 1.23rc1
+      - name: Install Go 1.23rc1
+        run: |
+          wget https://golang.org/dl/go1.23rc1.linux-amd64.tar.gz
+          sudo tar -C /usr/local -xzf go1.23rc1.linux-amd64.tar.gz
+          echo "export PATH=$PATH:/usr/local/go/bin" >> $GITHUB_ENV
+      - name: Setup Go environment
+        run: echo "GOROOT=$(go env GOROOT)" >> $GITHUB_ENV
+      - name: Install dependencies
+        run: go mod download
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
