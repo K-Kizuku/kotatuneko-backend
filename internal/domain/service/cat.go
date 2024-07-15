@@ -1,9 +1,13 @@
 package service
 
-import "github.com/K-Kizuku/kotatuneko-backend/internal/domain/entity"
+import (
+	"context"
+
+	"github.com/K-Kizuku/kotatuneko-backend/internal/domain/entity"
+)
 
 type ICatService interface {
-	Do(hand *entity.Hand, roomID string) (*[]entity.Object, error)
-	Get(roomID string) (*[]entity.Object, error)
-	Init(roomID string) error
+	Do(ctx context.Context, hand *entity.Hand, roomID string) (*[]entity.Object, error)
+	Get(ctx context.Context, roomID string) (*[]entity.Object, error)
+	Init(ctx context.Context, roomID string) error
 }

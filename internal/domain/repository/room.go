@@ -1,10 +1,14 @@
 package repository
 
-import "github.com/K-Kizuku/kotatuneko-backend/internal/domain/entity"
+import (
+	"context"
+
+	"github.com/K-Kizuku/kotatuneko-backend/internal/domain/entity"
+)
 
 type IRoomObjectRepository interface {
-	Get(roomID string) (*[]entity.Object, error)
-	Set(roomID string, objects *[]entity.Object) error
-	Resister(id string) error
-	Unregister(id string) error
+	Get(ctx context.Context, roomID string) (*[]entity.Object, error)
+	Set(ctx context.Context, roomID string, objects *[]entity.Object) error
+	Resister(ctx context.Context, id string) error
+	Unregister(ctx context.Context, id string) error
 }

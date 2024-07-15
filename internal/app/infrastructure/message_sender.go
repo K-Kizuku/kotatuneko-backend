@@ -2,7 +2,6 @@ package infrastructure
 
 import (
 	"context"
-	"fmt"
 	"sync"
 	"time"
 
@@ -36,7 +35,6 @@ func (c *Client) run() {
 				}
 			case string:
 				err := c.conn.WriteMessage(websocket.TextMessage, []byte(msg))
-				fmt.Println(msg)
 				if err != nil {
 					c.err <- err
 					return
@@ -68,7 +66,6 @@ func (s *MsgSender) Send(ctx context.Context, to string, data interface{}) error
 	if !ok {
 		return errors.New("client not found")
 	}
-
 	select {
 	case client.ch <- data:
 		return nil

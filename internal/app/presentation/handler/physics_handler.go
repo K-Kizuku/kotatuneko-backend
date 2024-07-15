@@ -11,10 +11,10 @@ import (
 type PhysicsHandler struct {
 	physicsService  service.IRoomObjectService
 	wsHandler       websocket.IWSHandler
-	physicsSwitcher switcher.ISwitcher
+	physicsSwitcher switcher.IPhysicsSwitcher
 }
 
-func NewPhysicsHandler(physicsService service.IRoomObjectService, wsHandler websocket.IWSHandler, physicsSwitcher switcher.ISwitcher) *PhysicsHandler {
+func NewPhysicsHandler(physicsService service.IRoomObjectService, wsHandler websocket.IWSHandler, physicsSwitcher switcher.IPhysicsSwitcher) *PhysicsHandler {
 	return &PhysicsHandler{
 		physicsService:  physicsService,
 		wsHandler:       wsHandler,
@@ -23,7 +23,9 @@ func NewPhysicsHandler(physicsService service.IRoomObjectService, wsHandler webs
 }
 
 func (h *PhysicsHandler) Calculate() func(http.ResponseWriter, *http.Request) error {
+
 	return func(w http.ResponseWriter, r *http.Request) error {
+
 		h.wsHandler.Start(r.Context(), w, r, h.physicsSwitcher)
 		return nil
 	}

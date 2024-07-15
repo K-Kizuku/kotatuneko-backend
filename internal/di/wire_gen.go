@@ -21,11 +21,11 @@ import (
 func InitHandler() *presentation.Root {
 	client := cache.NewCacheClient()
 	iRoomObjectRepository := infrastructure.NewRoomObjectRepository(client)
-	iRoomObjectService := service.NewRoomObjectService(iRoomObjectRepository)
 	iMessageSender := infrastructure.NewMsgSender()
-	iSwitcher := switcher.NewPhysicsSwitcher(iRoomObjectService)
-	iwsHandler := websocket.NewWSHandler(iMessageSender, iSwitcher)
-	physicsHandler := handler.NewPhysicsHandler(iRoomObjectService, iwsHandler, iSwitcher)
+	iRoomObjectService := service.NewRoomObjectService(iRoomObjectRepository, iMessageSender)
+	iwsHandler := websocket.NewWSHandler(iRoomObjectService, iMessageSender)
+	iPhysicsSwitcher := switcher.NewPhysicsSwitcher(iRoomObjectService)
+	physicsHandler := handler.NewPhysicsHandler(iRoomObjectService, iwsHandler, iPhysicsSwitcher)
 	root := presentation.New(physicsHandler)
 	return root
 }

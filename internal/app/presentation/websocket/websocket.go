@@ -4,24 +4,25 @@ import (
 	"context"
 	"net/http"
 
+	appService "github.com/K-Kizuku/kotatuneko-backend/internal/app/application/service"
 	"github.com/K-Kizuku/kotatuneko-backend/internal/app/presentation/switcher"
 	"github.com/K-Kizuku/kotatuneko-backend/internal/domain/service"
 	"github.com/gorilla/websocket"
 )
 
 type IWSHandler interface {
-	Start(ctx context.Context, w http.ResponseWriter, r *http.Request, switcher switcher.ISwitcher)
+	Start(ctx context.Context, w http.ResponseWriter, r *http.Request, switcher switcher.ISwitcher) error
 }
 
 type WSHandler struct {
-	msgSender service.IMessageSender
-	physics   switcher.ISwitcher
+	roomObjectService appService.IRoomObjectService
+	msgSender         service.IMessageSender
 }
 
-func NewWSHandler(sender service.IMessageSender, physics switcher.ISwitcher) IWSHandler {
+func NewWSHandler(roomObjectService appService.IRoomObjectService, sender service.IMessageSender) IWSHandler {
 	return &WSHandler{
-		msgSender: sender,
-		physics:   physics,
+		roomObjectService: roomObjectService,
+		msgSender:         sender,
 	}
 }
 
@@ -33,14 +34,25 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-func (ws *WSHandler) Start(ctx context.Context, w http.ResponseWriter, r *http.Request, switcher switcher.ISwitcher) {
+func (ws *WSHandler) Start(ctx context.Context, w http.ResponseWriter, r *http.Request, switcher switcher.ISwitcher) error {
+
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		return
+		return err
 	}
-	defer conn.Close()
+	errCh := make(chan error)
+	ws.msgSender.Register("roomID", conn, errCh)
+	// defer conn.Close()
 
-	if err := switcher.Switch(ctx, conn); err != nil {
-		return
+	if err := ws.roomObjectService.Calculate(ctx, "roomID"); err != nil {
+		return err
 	}
+
+	go func() {
+		if err := switcher.Switch(ctx, conn); err != nil {
+			return
+		}
+	}()
+	// defer close(errCh)
+	return nil
 }
