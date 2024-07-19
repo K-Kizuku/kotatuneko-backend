@@ -7,7 +7,7 @@ import (
 )
 
 type ICatService interface {
-	Do(ctx context.Context, hand *entity.Hand, roomID string) (*[]entity.Object, error)
-	Get(ctx context.Context, roomID string) (*[]entity.Object, error)
-	Init(ctx context.Context, roomID string) error
+	Do(ctx context.Context, hand *entity.Hand) error
+	Get(ctx context.Context) error
+	Init(ctx context.Context) error
 }

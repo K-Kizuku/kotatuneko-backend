@@ -1,5 +1,7 @@
 github.com/K-Kizuku/kotatuneko-protobuf v0.1.12 h1:UTkwKoy/V8UqB4VAzmob4jlKUSBWWV9h5AYig5ePzUo=
 github.com/K-Kizuku/kotatuneko-protobuf v0.1.12/go.mod h1:ZBxjHcSWcZd3cfVLEPArmWfVVJtGfBnuAjbj0bKSrwY=
+github.com/K-Kizuku/kotatuneko-protobuf v0.1.13 h1:a/6NNe+jhmO5gV8Vb2C202kgnOtM8SgQhkh+XPyzIXc=
+github.com/K-Kizuku/kotatuneko-protobuf v0.1.13/go.mod h1:ZBxjHcSWcZd3cfVLEPArmWfVVJtGfBnuAjbj0bKSrwY=
 github.com/cespare/xxhash/v2 v2.1.1 h1:6MnRN8NT7+YBpUIWxHtefFZOKTAPgGjpQSxqLNn0+qY=
 github.com/cespare/xxhash/v2 v2.1.1/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

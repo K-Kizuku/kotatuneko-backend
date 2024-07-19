@@ -29,7 +29,7 @@ func main() {
 		fmt.Fprint(w, "Hello, World")
 	})
 
-	mux.Handle("GET /ws/pyhsics", handler.AppHandler(h.PhysicsHandler.Calculate()))
+	mux.Handle("GET /ws/physics", handler.AppHandler(h.PhysicsHandler.Calculate()))
 
 	c := cors.AllowAll()
 	handler := middleware.Chain(mux, middleware.Context, c.Handler, middleware.Recover, middleware.Logger)
