@@ -19,7 +19,7 @@ type HandService struct {
 	nr repository.INikukyuRepository
 }
 
-func New(or repository.IObjectRepository, nr repository.INikukyuRepository) IHandService {
+func NewHand(or repository.IObjectRepository, nr repository.INikukyuRepository) IHandService {
 	return &HandService{
 		or: or,
 		nr: nr,

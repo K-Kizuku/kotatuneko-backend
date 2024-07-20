@@ -41,12 +41,8 @@ func (ws *WSHandler) Start(ctx context.Context, w http.ResponseWriter, r *http.R
 		return err
 	}
 	errCh := make(chan error)
-	ws.msgSender.Register("roomID", conn, errCh)
+	ws.msgSender.Register("roomID", "roomID", conn, errCh)
 	// defer conn.Close()
-
-	if err := ws.roomObjectService.Calculate(ctx, "roomID"); err != nil {
-		return err
-	}
 
 	go func() {
 		if err := switcher.Switch(ctx, conn); err != nil {

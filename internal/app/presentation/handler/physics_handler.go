@@ -25,7 +25,6 @@ func NewPhysicsHandler(physicsService service.IRoomObjectService, wsHandler webs
 func (h *PhysicsHandler) Calculate() func(http.ResponseWriter, *http.Request) error {
 
 	return func(w http.ResponseWriter, r *http.Request) error {
-
 		h.wsHandler.Start(r.Context(), w, r, h.physicsSwitcher)
 		return nil
 	}

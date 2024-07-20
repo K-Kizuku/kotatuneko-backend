@@ -24,3 +24,22 @@ const (
 	ObjectState_MOVING
 	ObjectState_FORCING
 )
+
+func (o *Object) DeepCopy() *Object {
+	return &Object{
+		ID:    o.ID,
+		Layer: o.Layer,
+		Kinds: o.Kinds,
+		State: o.State,
+		Position: Vector3{
+			X: o.Position.X,
+			Y: o.Position.Y,
+			Z: o.Position.Z,
+		},
+		Size: Vector3{
+			X: o.Size.X,
+			Y: o.Size.Y,
+			Z: o.Size.Z,
+		},
+	}
+}

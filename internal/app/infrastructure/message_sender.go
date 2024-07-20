@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"time"
 
@@ -11,7 +12,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-const writeWait = 10 * time.Millisecond
+const writeWait = 500 * time.Millisecond
 
 type Client struct {
 	conn   *websocket.Conn
@@ -28,18 +29,23 @@ func (c *Client) run() {
 		case msg := <-c.ch:
 			switch msg := msg.(type) {
 			case []byte:
+				fmt.Println("1111")
 				err := c.conn.WriteMessage(websocket.BinaryMessage, msg)
 				if err != nil {
 					c.err <- err
 					return
 				}
 			case string:
+				fmt.Println("22222")
+
 				err := c.conn.WriteMessage(websocket.TextMessage, []byte(msg))
 				if err != nil {
 					c.err <- err
 					return
 				}
 			default:
+				fmt.Println(msg)
+
 				c.err <- errors.New("unknown message type")
 			}
 		}
@@ -48,13 +54,15 @@ func (c *Client) run() {
 
 type MsgSender struct {
 	mutex   *sync.RWMutex
-	clients map[string]*Client
+	clients map[string]*Client  // userID -> client
+	rooms   map[string][]string // roomID -> userIDs
 }
 
 func NewMsgSender() service.IMessageSender {
 	return &MsgSender{
 		mutex:   new(sync.RWMutex),
 		clients: make(map[string]*Client),
+		rooms:   make(map[string][]string),
 	}
 }
 
@@ -66,6 +74,7 @@ func (s *MsgSender) Send(ctx context.Context, to string, data interface{}) error
 	if !ok {
 		return errors.New("client not found")
 	}
+	fmt.Println("YYYYY")
 	select {
 	case client.ch <- data:
 		return nil
@@ -74,11 +83,11 @@ func (s *MsgSender) Send(ctx context.Context, to string, data interface{}) error
 	}
 }
 
-func (s *MsgSender) Broadcast(ctx context.Context, ids []string, data interface{}) error {
+func (s *MsgSender) Broadcast(ctx context.Context, roomID string, data interface{}) error {
 	s.mutex.RLock()
 	defer s.mutex.RUnlock()
 
-	for _, id := range ids {
+	for _, id := range s.rooms[roomID] {
 		client, ok := s.clients[id]
 		if !ok {
 			continue
@@ -94,7 +103,7 @@ func (s *MsgSender) Broadcast(ctx context.Context, ids []string, data interface{
 	return nil
 }
 
-func (s *MsgSender) Register(userID string, conn *websocket.Conn, err chan error) {
+func (s *MsgSender) Register(roomID, userID string, conn *websocket.Conn, err chan error) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
 
@@ -107,6 +116,7 @@ func (s *MsgSender) Register(userID string, conn *websocket.Conn, err chan error
 	go client.run()
 
 	s.clients[userID] = client
+	s.rooms[roomID] = append(s.rooms[roomID], userID)
 }
 
 func (s *MsgSender) Unregister(userID string) {
